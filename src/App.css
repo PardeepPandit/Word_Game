@@ -1,0 +1,50 @@
+.App {
+  text-align: center;
+}
+
+.frame{
+  display: flex;
+  justify-content: center;
+  border: 2px solid black;
+  width: 5%;
+  
+}
+.main{
+  width: 50%;
+  margin: auto;
+  padding:20px;
+  background-color: honeydew;
+  border:1px solid gray;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.time-main{
+  width: 300px;
+  display: flex;
+  justify-content:space-around;
+  align-items: center;
+  background: chartreuse;
+  border-radius: 20px;
+}
+p{
+  font-size: 2rem;
+  background: tomato;
+}
+.timer{
+  width: 100px;
+  border: 1px solid black;
+  text-align: center;
+  background: yellow;
+  font-size: 2rem;
+  border-radius: 50%;
+}
+.input-field{
+  height: 40px;
+  font-size: 2rem;
+  margin-top: 20px;
+  border-radius: 25px;
+  padding:5px 20px;
+  background: yellow;
+}
