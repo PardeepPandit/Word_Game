@@ -14,23 +14,36 @@ export function useTimerConsumerUpdate(){
 export function TimerProvider({children}){
 
   const[result,setResult]=useState(()=>'win');
-    const [seconds, setSeconds] = useState(40);
+  const [loser,setLoser]=useState({name:'dummy',out:false});
+    const [seconds, setSeconds] = useState(10);
     var myVar;
   useEffect(() => {
     if (seconds > 0 ) {
       myVar=setTimeout(() => setSeconds(seconds - 1), 1000);
     } else {
-      setResult('lose')
+      console.log("time out")
+      //myStopFunction();
+      setLoser({name:"You",out:true})
     }
   },[seconds]);
 
   function myStopFunction() {
+    console.log("my stop funvtion=====>",loser.name,",",loser.out)
     clearTimeout(myVar);
-    setSeconds(40)
+    
+    if(loser.name==='Computer' && loser.out===false){
+      console.log("timer stoppppppp")
+    }
+    else if(!loser.out)
+    {
+      setSeconds(10)
+    }
+  
+    
   }
   return (
-    <TimerContext.Provider value={{seconds,result}}>
-      <TimerContextUpdate.Provider value={{myStopFunction,setResult}}>
+    <TimerContext.Provider value={{seconds,result,loser}}>
+      <TimerContextUpdate.Provider value={{myStopFunction,setResult,setLoser}}>
         {children}
       </TimerContextUpdate.Provider>
     </TimerContext.Provider>

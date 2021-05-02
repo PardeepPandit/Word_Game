@@ -3,12 +3,13 @@ import Timer from './Timer';
 import axios from 'axios'
 import { useTimerConsumer, useTimerConsumerUpdate } from './TimerContext'
 /*import {useDictionaryConsumerUpdate} from './DictionaryContext' */
-
+var val;
 export const Display = () => {
-  const {myStopFunction,setResult} = useTimerConsumerUpdate();
+  //console.log("Display rendring")
+  const {myStopFunction,setResult,setLoser} = useTimerConsumerUpdate();
   /*const setSearchStr=useTimerConsumerUpdate(); */
-  const { result } = useTimerConsumer();
-  const [loser,SetLoser]=useState({name:'dummy',out:false});
+  const { result ,loser} = useTimerConsumer();
+  //const [loser,SetLoser]=useState({name:'dummy',out:false});
 
   var alphabets = 'ABCDEFWXYZ';
   const [character, setCharacter] = useState('');
@@ -49,6 +50,31 @@ export const Display = () => {
     console.log("initialstate")
     return getRandomChar()
   });
+//Search API
+useEffect(async () => {
+    
+  console.log("fetching data for====>",inputText)
+  {loser.out && setLoading(true)
+    console.log("loser=",loser.name,",",loser.out)
+    console.log("calling api for str=", inputText)
+    const res = await axios.get(`https://api.datamuse.com/words?sp=${inputText}*`)
+    //console.log("length=",res.data)
+    if(res.data.length===0){
+        setResult('lose')
+        //SetLoser(true)
+        //setWordList(['empty'])
+    }else{
+        setWordList(res.data)
+        //setWordList(JSON.stringify(res.data))
+        console.log("wordList data=",res.data)
+    }
+    setLoading(false)
+    turnControler(res.data,res.data.length);
+    
+} 
+}, [character])
+
+
 
   const computerTurn=()=>{
     //setSearchStr(inputText)
@@ -68,38 +94,16 @@ export const Display = () => {
       //SetLoser({name:'computer Lose',exit:false})
       //console.log("now searchStr=", inputText)
       
-      
-    }, 4000)
-    SetLoser({name:'Computer',out:false});
+      //myStopFunction()
+    }, 3000)
+    setLoser({name:'Computer',out:false});
     setOnce(false)
     console.log("exit from computerTurn=",once)
+    
   }
   
 
-  //Search API
-  useEffect(async () => {
-    
-    console.log("fetching data")
-    {loser.out && setLoading(true)
-      console.log("loser=",loser.name,",",loser.out)
-      console.log("calling api for str=", inputText)
-      const res = await axios.get(`https://api.datamuse.com/words?sp=${inputText}*`)
-      //console.log("length=",res.data)
-      if(res.data.length===0){
-          setResult('lose')
-          //SetLoser(true)
-          setWordList(['empty'])
-      }else{
-          setWordList(res.data)
-          //setWordList(JSON.stringify(res.data))
-          //console.log(res.data)
-      }
-      setLoading(false)
-      turnControler(res.data.length);
-      
-  } 
-  }, [character])
-
+  
   const findChar=()=>{
 
         const randomword = Math.floor(Math.random() * wordList.length);
@@ -119,18 +123,23 @@ export const Display = () => {
         
   } 
 
-  const turnControler=(len)=>{
-    if((loser.name==='Human' || loser.name==='Computer') && len>0){
+  const turnControler=(data,len)=>{
+    //setWordList(data)
+    console.log("inside turn controler",loser.name,",",len);
+    if((loser.name==='You' || loser.name==='Computer') && len>0){
 
-      //console.log("inputText=========>",inputText)
-      //console.log("val before============>",wordList)
-      const val=wordList.find((item)=>{
+      console.log("inputText=========>",inputText)
+      console.log("val before============>",data)
+      val=data.find((item)=>{
         return item.word.toUpperCase()===inputText.toUpperCase()
       })
       console.log("val========================>",val)
       if(val){
-        SetLoser(pre=>({...loser,out:true}));
+        console.log("value matched============>",val)
+        setLoser(pre=>({...loser,out:true}));
         setOnce(false)
+        console.log("calling my stop function====>>",loser.name,",",loser.out)
+        myStopFunction()
         return 
       }
     }
@@ -140,7 +149,8 @@ export const Display = () => {
       computerTurn()
     }
     if(len<=0){
-      SetLoser(pre=>({...loser,out:true}));
+      setLoser(pre=>({...loser,out:true}));
+      //myStopFunction()
     }
     
     
@@ -156,7 +166,7 @@ export const Display = () => {
     setInputText(pre => pre + currentChar);
     console.log("Me Entered", currentChar)
     //SetLoser(pre=>{return {...pre,name:'Human Lose',exit:false}})
-    SetLoser({name:'Human',out:false})
+    setLoser({name:'You',out:false})
     //console.log(loser.name);
     setCharacter(currentChar)
     myStopFunction()
@@ -164,19 +174,14 @@ export const Display = () => {
   return (
     <Fragment>
       {console.log("chek it=",loser.out)}
-      {!loser.out ? <input type='text' className='input-field' value={inputText} placeholder='Enter charachter' onChange={e => myTurn(e)}></input>:<h1>{loser.name} Lose</h1>}
-      
+      {!loser.out ? <input type='text' className='input-field' value={inputText} placeholder='Enter charachter' onChange={e => myTurn(e)}></input>:''}
 
-        {/* {result === 'win' ? <div className='main'>
-        <input type='text' className='input-field' value={inputText} placeholder='Enter charachter' onChange={e => myTurn(e)}></input>
-
-      </div> : loser.name+"Lose"} */} 
-
-      {inputText}
+      {/* {inputText} */}
+      {JSON.stringify(val)}
       <br></br>
-      {!loading && wordList.length}
+     {/*  {!loading && wordList.length} */}
       <br></br>
-      {!loading && JSON.stringify(wordList)} 
+      {/* {!loading && JSON.stringify(wordList)} */} 
     </Fragment>
 
   )

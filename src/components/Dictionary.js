@@ -7,10 +7,7 @@ export const Dictionary = () => {
  
   return (
       <Fragment>
-        {loading ? 'Loading...' :<div>
-        <h3>Dictionary</h3>
-        {words}
-      </div>}
+        
     </Fragment>
     
   )
