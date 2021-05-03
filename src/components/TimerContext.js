@@ -15,7 +15,7 @@ export function TimerProvider({children}){
 
   const[result,setResult]=useState(()=>'win');
   const [loser,setLoser]=useState({name:'You',out:false});
-  const [seconds, setSeconds] = useState(10);
+  const [seconds, setSeconds] = useState(60);
     var myVar;
   useEffect(() => {
     if (seconds > 0 ) {
@@ -27,7 +27,7 @@ export function TimerProvider({children}){
 
   function resetTime(){
     clearTimeout(myVar)
-    setSeconds(10)
+    setSeconds(60)
   }
 
   function clearTime() {
