@@ -6,17 +6,15 @@ import { useTimerConsumer, useTimerConsumerUpdate } from './TimerContext'
 var val;
 export const Display = () => {
   //console.log("Display rendring")
-  const {myStopFunction,setResult,setLoser} = useTimerConsumerUpdate();
+  const {clearTime,setResult,setLoser,resetTime} = useTimerConsumerUpdate();
   /*const setSearchStr=useTimerConsumerUpdate(); */
   const { result ,loser} = useTimerConsumer();
-  //const [loser,SetLoser]=useState({name:'dummy',out:false});
-
-  var alphabets = 'ABCDEFWXYZ';
+  const [bool,setBool]=useState({name2:'',boola:false})//1
+  var alphabets = 'ABCDFGHIJKLMNOPQRSTUVWXYZ';
   const [character, setCharacter] = useState('');
   const [once, setOnce] = useState(() => { return false })
   ////////////////////////////
 
-  const [searchStr, setSearchStr] = useState('');
   const [wordList, setWordList] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -50,13 +48,15 @@ export const Display = () => {
     console.log("initialstate")
     return getRandomChar()
   });
+
+ 
+
 //Search API
 useEffect(async () => {
     
-  console.log("fetching data for====>",inputText)
+  console.log("UseEffect fetching data for====>",inputText)
   {loser.out && setLoading(true)
-    console.log("loser=",loser.name,",",loser.out)
-    console.log("calling api for str=", inputText)
+    console.log("fetching data useEffect loser=",loser.name,",",loser.out)
     const res = await axios.get(`https://api.datamuse.com/words?sp=${inputText}*`)
     //console.log("length=",res.data)
     if(res.data.length===0){
@@ -66,21 +66,41 @@ useEffect(async () => {
     }else{
         setWordList(res.data)
         //setWordList(JSON.stringify(res.data))
-        console.log("wordList data=",res.data)
+        //console.log("wordList data=",res.data)
     }
     setLoading(false)
+    console.log("Calling turnControler");
     turnControler(res.data,res.data.length);
     
-} 
-}, [character])
+}
+console.log("Exit UseEffect from API fetch") 
 
+}, [inputText])
 
+  
+useEffect(() => {
+
+  console.log("useEffect for callMyStopFun")
+  if(loser.out===true){
+    console.log("calling callMyStopFun()")
+    callMyStopFun();
+  }
+  console.log("Exit form UseEffect for callMyStopFun")
+},[loser])
+
+const callMyStopFun=()=>{
+  console.log("Inside callMyStopFun")
+  console.log("calling clearTime()====>>", loser.name, ",", loser.out)
+  /* console.log("calling my stop function====>>", loser.name, ",", loser.out,",Bool=",bool.name2,",",bool.boola) */
+  clearTime()
+  console.log("Exit from callMyStopFun")
+}
 
   const computerTurn=()=>{
     //setSearchStr(inputText)
-    
     once && setTimeout(() => {
-      console.log("Computer Turn")
+      console.log("Inside Computer Turn")
+      setLoser({name:'Computer',out:false});
       //console.log("serching word=", inputText)
       //let char = getRandomChar()
       let char=findChar()
@@ -94,10 +114,9 @@ useEffect(async () => {
       //SetLoser({name:'computer Lose',exit:false})
       //console.log("now searchStr=", inputText)
       
+      setOnce(false)
       //myStopFunction()
     }, 3000)
-    setLoser({name:'Computer',out:false});
-    setOnce(false)
     console.log("exit from computerTurn=",once)
     
   }
@@ -125,8 +144,8 @@ useEffect(async () => {
 
   const turnControler=(data,len)=>{
     //setWordList(data)
-    console.log("inside turn controler",loser.name,",",len);
-    if((loser.name==='You' || loser.name==='Computer') && len>0){
+    console.log("inside turn controler",loser.name,",",len,",once=",once);
+    if((loser.name==='You' || loser.name==='Computer') && len>0 && once){
 
       console.log("inputText=========>",inputText)
       console.log("val before============>",data)
@@ -139,7 +158,7 @@ useEffect(async () => {
         setLoser(pre=>({...loser,out:true}));
         setOnce(false)
         console.log("calling my stop function====>>",loser.name,",",loser.out)
-        myStopFunction()
+        clearTimeout()
         return 
       }
     }
@@ -149,31 +168,36 @@ useEffect(async () => {
       computerTurn()
     }
     if(len<=0){
-      setLoser(pre=>({...loser,out:true}));
+      console.log("caling clearTimeout*")
+      clearTimeout()
+      //setLoser(pre=>({...loser,out:true}));
       //myStopFunction()
     }
-    
-    
-      
+      console.log("Exit from Turn controler")
   }
 
 
   const myTurn = (e) => {
-    console.log("My Turn")
-    setOnce(true)
+    console.log("Inside My Turn()")
+    
+    //setLoser({name:'You',out:false})
     let currentChar = e.target.value;
     currentChar = currentChar.charAt(currentChar.length - 1)
     setInputText(pre => pre + currentChar);
     console.log("Me Entered", currentChar)
     //SetLoser(pre=>{return {...pre,name:'Human Lose',exit:false}})
-    setLoser({name:'You',out:false})
+    
     //console.log(loser.name);
     setCharacter(currentChar)
-    myStopFunction()
+    //myStopFunction()
+    console.log("calling RESET TIME");
+    resetTime()
+    console.log("Exit from My Turn")
+    setOnce(true)
   }
   return (
     <Fragment>
-      {console.log("chek it=",loser.out)}
+      {/* {console.log("out=",loser.out)} */}
       {!loser.out ? <input type='text' className='input-field' value={inputText} placeholder='Enter charachter' onChange={e => myTurn(e)}></input>:''}
 
       {/* {inputText} */}

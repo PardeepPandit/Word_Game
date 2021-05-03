@@ -10,7 +10,8 @@
   
 }
 .main{
-  width: 80%;
+  width: 40%;
+  height: 90vh;
   margin: auto;
   padding:20px;
   background-color: honeydew;
@@ -29,8 +30,10 @@
   border-radius: 20px;
 }
 p{
-  font-size: 2rem;
+  font-size: 1.5rem;
   background: tomato;
+  border-radius: 25px;
+  padding: 5px;
 }
 .timer{
   width: 100px;
@@ -49,4 +52,22 @@ p{
   background: yellow;
   outline: none;
   
+}
+
+.btn{
+  background: #222;
+  height: 30px;
+  min-width: 100px;
+  border: none;
+  border-radius: 10px;
+  color: #eee;
+  font-size: 20px;
+  cursor: pointer;
+  
+}
+.heading{
+  color: rgb(240, 61, 16);
+  border: 2px solid black;
+  padding: 10px;
+  border-radius: 20px;
 }
