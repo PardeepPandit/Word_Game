@@ -10,7 +10,7 @@ function App() {
         <div className='main'>
           <h1 className='heading'>Word Game</h1>
             <Timer/> 
-            <Display />
+             <Display /> 
         </div>
     </TimerProvider>
   );
